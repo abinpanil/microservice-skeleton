@@ -1,0 +1,35 @@
+services:
+  client-service:
+    container_name: client-service
+    build:
+      context: ./services/client-service
+    volumes:
+      - ./services/client-service:/app
+      - /app/node_modules
+    ports:
+      - '3000:3000'
+    depends_on:
+      - redis-server
+
+  user-service:
+    container_name: user-service
+    build:
+      context: ./services/user-service
+    volumes:
+      - ./services/user-service:/app
+      - /app/node_modules
+    depends_on:
+      - redis-server
+
+  redis-server:
+    image: redis
+    container_name: redis-server
+    ports:
+      - 6379:6379
+    volumes: 
+      # - ./redis-data:/redis.conf
+      - ./redis-service/config/redis.conf:/redis.conf
+    command: [ "redis-server", "/redis.conf" ]
+
+volumes:
+  redis-data:
